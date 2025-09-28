@@ -40,7 +40,7 @@ public class NotificationService {
 
         return notificationRepository.findAll()
                 .stream()
-                .filter(n -> n.getReceiver().equals(receiver))
+                .filter(n -> n.getReceiver() != null && n.getReceiver().getId().equals(receiver.getId()))
                 .map(notificationMapper::toDTO)
                 .collect(Collectors.toList());
     }
