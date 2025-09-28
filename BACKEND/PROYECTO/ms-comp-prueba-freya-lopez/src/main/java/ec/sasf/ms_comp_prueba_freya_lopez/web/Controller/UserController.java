@@ -8,6 +8,7 @@ import ec.sasf.ms_comp_prueba_freya_lopez.web.Mapper.UserMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -39,11 +40,14 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
-    @GetMapping
-    @Operation(summary = "Listar usuarios", description = "Obtiene todos los usuarios")
-    public ResponseEntity<List<UserResponseDTO>> listarUsuarios() {
-        List<UserResponseDTO> dtos = userService.listarUsuarios(); // ya retorna DTOs
-        return ResponseEntity.ok(dtos);
+    @GetMapping("/paginated")
+    @Operation(summary = "Listar usuarios paginados", description = "Obtiene usuarios paginados (ej. 5 por página)")
+    public ResponseEntity<Page<UserResponseDTO>> listarUsuariosPaginados(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size) {
+
+        Page<UserResponseDTO> usuarios = userService.listarUsuariosPaginados(page, size);
+        return ResponseEntity.ok(usuarios);
     }
 
     @PutMapping("/{id}")
@@ -67,7 +71,7 @@ public class UserController {
         UserEntity user = userService.buscarPorEmailEntity(userDetails.getUsername());
         return ResponseEntity.ok(userMapper.toResponseDTO(user));
     }
-    
+
     @PutMapping("/admin/block/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Bloquear usuario", description = "Bloquea un usuario (solo admin)")

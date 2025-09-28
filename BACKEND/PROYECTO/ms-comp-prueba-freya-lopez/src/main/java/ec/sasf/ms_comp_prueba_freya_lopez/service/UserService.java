@@ -7,6 +7,9 @@ import ec.sasf.ms_comp_prueba_freya_lopez.web.DTO.UserRequestDTO;
 import ec.sasf.ms_comp_prueba_freya_lopez.web.DTO.UserResponseDTO;
 import ec.sasf.ms_comp_prueba_freya_lopez.web.Mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -29,11 +32,10 @@ public class UserService {
         return userMapper.toResponseDTO(saved);
     }
 
-    public List<UserResponseDTO> listarUsuarios() {
-        return userRepository.findAll()
-                .stream()
-                .map(userMapper::toResponseDTO)
-                .toList();
+    public Page<UserResponseDTO> listarUsuariosPaginados(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<UserEntity> usersPage = userRepository.findAll(pageable);
+        return usersPage.map(userMapper::toResponseDTO); // convierte UserEntity a DTO
     }
 
     public UserResponseDTO buscarPorId(Long id) {

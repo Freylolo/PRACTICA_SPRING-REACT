@@ -1,6 +1,8 @@
 package ec.sasf.ms_comp_prueba_freya_lopez.persistence.repository;
 
 import ec.sasf.ms_comp_prueba_freya_lopez.persistence.entity.UserEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -12,4 +14,6 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     Optional<UserEntity> findByEmail(String email);
 
     boolean existsByEmail(String email);
+    Page<UserEntity> findAll(Pageable pageable);
+
 }
