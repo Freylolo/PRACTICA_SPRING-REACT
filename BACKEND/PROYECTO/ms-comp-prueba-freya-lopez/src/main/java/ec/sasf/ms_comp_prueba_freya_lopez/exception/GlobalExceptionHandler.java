@@ -72,6 +72,10 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
     public ResponseEntity<ErrorResponse> handleInvalidCredentials(InvalidCredentialsException e) {
         return error(HttpStatus.UNAUTHORIZED, e, e.getMessage());
     }
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<ErrorResponse> handleBadRequest(BadRequestException e) {
+        return error(HttpStatus.BAD_REQUEST, e, e.getMessage());
+    }
 
 
 }

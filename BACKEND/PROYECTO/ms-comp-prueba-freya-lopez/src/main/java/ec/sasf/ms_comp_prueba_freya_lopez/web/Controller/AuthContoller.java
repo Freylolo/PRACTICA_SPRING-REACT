@@ -9,17 +9,22 @@ import ec.sasf.ms_comp_prueba_freya_lopez.web.DTO.AuthRequest;
 import ec.sasf.ms_comp_prueba_freya_lopez.web.DTO.AuthResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import ec.sasf.ms_comp_prueba_freya_lopez.exception.BadRequestException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -34,7 +39,12 @@ public class AuthContoller {
 
     @Operation(summary = "Login", description = "Autentica un usuario y devuelve un token JWT")
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request) {
+    public ResponseEntity<AuthResponse> login(@Valid @RequestBody AuthRequest request, BindingResult result) {
+        if (result.hasErrors()) {
+            throw new BadRequestException("Campos inválidos: " + result.getFieldErrors().stream()
+                    .map(f -> f.getField() + ": " + f.getDefaultMessage())
+                    .collect(Collectors.joining(", ")));
+        }
 
         // Buscar usuario por email
         UserEntity user = userService.buscarPorEmailEntity(request.getEmail());

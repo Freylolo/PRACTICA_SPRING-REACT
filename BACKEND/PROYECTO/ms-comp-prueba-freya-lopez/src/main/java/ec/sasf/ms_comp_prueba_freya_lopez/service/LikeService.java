@@ -47,22 +47,21 @@ public class LikeService {
         return likeDTO;
     }
 
-    public List<LikeDTO> obtenerLikesRecibidos(Long receiverId) {
-        UserEntity receiver = userService.buscarPorIdEntity(receiverId);
-        return likeRepository.findAll()
+    public List<LikeDTO> obtenerLikesEnviados(Long senderId) {
+        UserEntity sender = userService.buscarPorIdEntity(senderId);
+        return likeRepository.findBySender(sender)
                 .stream()
-                .filter(like -> like.getReceiver().equals(receiver))
                 .map(likeMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
-    public List<LikeDTO> obtenerLikesEnviados(Long senderId) {
-        UserEntity sender = userService.buscarPorIdEntity(senderId);
-        return likeRepository.findAll()
+    public List<LikeDTO> obtenerLikesRecibidos(Long receiverId) {
+        UserEntity receiver = userService.buscarPorIdEntity(receiverId);
+        return likeRepository.findByReceiver(receiver)
                 .stream()
-                .filter(like -> like.getSender().equals(sender))
                 .map(likeMapper::toDTO)
                 .collect(Collectors.toList());
     }
+
 
 }
