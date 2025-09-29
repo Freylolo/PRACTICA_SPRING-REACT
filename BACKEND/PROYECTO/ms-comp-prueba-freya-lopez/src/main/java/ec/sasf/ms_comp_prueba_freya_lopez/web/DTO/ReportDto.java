@@ -12,5 +12,7 @@ public class ReportDto {
     private String status;
     private LocalDateTime createdAt;
     private Long emisorId;
+    private String emisorName;
     private Long denunciadoId;
+    private String denunciadoName;
 }

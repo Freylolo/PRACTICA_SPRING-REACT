@@ -10,6 +10,8 @@ export default function useUsers(token) {
   const [likedUsers, setLikedUsers] = useState(new Set());
   const [currentUser, setCurrentUser] = useState(null);
   const [loadingCurrentUser, setLoadingCurrentUser] = useState(false);
+  const [blockedUsers, setBlockedUsers] = useState([]);
+
 
   const API_USERS = import.meta.env.VITE_API_USERS;
   const API_LIKES = import.meta.env.VITE_API_LIKES;
@@ -133,12 +135,96 @@ export default function useUsers(token) {
     }
   };
 
-  // Cargar usuarios, likes y usuario actual al inicio
+  // Desbloquear usuario
+  const desbloquearUsuario = async (userId) => {
+  if (!token) return setInfo("Debes estar logueado como admin");
+
+  try {
+    const res = await fetch(`${API_USERS}/admin/unblock/${userId}`, {
+      method: "PUT",
+      headers: { 
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json"
+      }
+    });
+
+    if (!res.ok) {
+      const errData = await res.json().catch(() => null);
+      throw new Error(errData?.mensaje || errData?.error || "Error al desbloquear usuario");
+    }
+
+    setSuccess("Usuario desbloqueado correctamente");
+
+    // Actualizar lista de usuarios
+    await fetchUsers();
+  } catch (err) {
+    setError(err.message);
+  }
+};
+
+const fetchBlockedUsers = useCallback(async () => {
+  if (!token) return;
+  try {
+    const res = await fetch(`${API_USERS}/admin/bloqueados`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!res.ok) throw new Error("No se pudieron cargar los usuarios bloqueados");
+    const data = await res.json();
+    
+    console.log("Usuarios bloqueados recibidos del backend:", data); 
+    setBlockedUsers(data); 
+  } catch (err) {
+    setError(err.message);
+  }
+}, [token, API_USERS]);
+
+// Bloquear usuario (solo admin)
+const bloquearUsuario = async (userId) => {
+  if (!token) return setInfo("Debes estar logueado como admin");
+
+  try {
+    const res = await fetch(`${API_USERS}/admin/block/${userId}`, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!res.ok) {
+      const errData = await res.json().catch(() => null);
+      throw new Error(errData?.mensaje || errData?.error || "Error al bloquear usuario");
+    }
+
+    setSuccess("Usuario bloqueado correctamente");
+
+    // Actualizar lista de bloqueados
+    await fetchBlockedUsers();
+  } catch (err) {
+    setError(err.message);
+  }
+};
+const eliminarUsuario = async (userId) => {
+  if (!token) return setInfo("Debes estar logueado como admin");
+  try {
+    const res = await fetch(`${API_USERS}/${userId}`, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!res.ok) throw new Error("Error al eliminar usuario");
+    setSuccess("Usuario eliminado correctamente");
+    await fetchUsers(); // Refresca lista
+  } catch (err) {
+    setError(err.message);
+  }
+};
+
   useEffect(() => {
-    fetchUsers();
-    fetchCurrentUser();
-    fetchSentLikes();
-  }, [fetchUsers, fetchCurrentUser, fetchSentLikes]);
+  fetchUsers();
+  fetchCurrentUser();
+  fetchSentLikes();
+  fetchBlockedUsers(); 
+}, [fetchUsers, fetchCurrentUser, fetchSentLikes, fetchBlockedUsers]);
 
   // Limpieza de mensajes automáticos
   useEffect(() => {
@@ -154,6 +240,7 @@ export default function useUsers(token) {
 
   return {
     users,
+    blockedUsers,
     loading,
     loadingCurrentUser,
     success,
@@ -164,9 +251,13 @@ export default function useUsers(token) {
     updateUser,
     giveLike,
     reportUser,
+    desbloquearUsuario,
     likedUsers,
     page,
     setPage,
     currentUser,
+    fetchBlockedUsers,
+    bloquearUsuario,
+    eliminarUsuario,
   };
 }

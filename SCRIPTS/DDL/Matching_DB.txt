@@ -1,0 +1,21 @@
+CREATE DATABASE matching;
+
+USE matching;
+
+INSERT INTO users 
+(name, email, password, role, avatar, estado_civil, account_non_locked, failed_attempts, estado, fe_creacion, fe_actualizacion)
+VALUES
+    (
+        'Juansito2024',
+        'Juansito2024@app.net',
+        '$K#2023#EMPRESA#$A#2024', 
+        'ADMIN',
+        'https://i.pravatar.cc/150?u=juansito2024@app.net',
+        'Soltero',
+        TRUE,
+        0,
+        'ACTIVO',
+        CURRENT_TIMESTAMP,
+        CURRENT_TIMESTAMP
+    );
+

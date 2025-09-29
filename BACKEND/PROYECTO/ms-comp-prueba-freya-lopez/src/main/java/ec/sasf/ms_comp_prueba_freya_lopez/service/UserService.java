@@ -110,6 +110,13 @@ public class UserService {
         user.setFailedAttempts(0); // Resetear intentos fallidos
         userRepository.save(user);
     }
-
-
+    public List<UserResponseDTO> listarUsuariosBloqueados() {
+        List<UserEntity> blocked = userRepository.findAll()
+                .stream()
+                .filter(u -> !u.isAccountNonLocked())
+                .collect(Collectors.toList());
+        return blocked.stream()
+                .map(userMapper::toResponseDTO)
+                .collect(Collectors.toList());
+    }
 }

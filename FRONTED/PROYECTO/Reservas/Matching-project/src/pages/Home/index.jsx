@@ -8,18 +8,17 @@ import Snackbar from "@mui/material/Snackbar";
 import toast from "react-hot-toast";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-import { FaHeart, FaFlag } from "react-icons/fa";
+import { FaHeart, FaFlag ,FaBan } from "react-icons/fa";
 import useUsers from "../../hooks/useUsers.js";
 
 
 export default function Home() {
  const token = localStorage.getItem("token");
-  const { users, loading, success, error, info, giveLike, reportUser, likedUsers, page, setPage } = useUsers(token);
+  const { users, loading, success, error, info, giveLike, reportUser, likedUsers, page, setPage, bloquearUsuario, } = useUsers(token);
   const [reportModalOpen, setReportModalOpen] = useState(false);
   const [reportUserId, setReportUserId] = useState(null);
   const [reportReason, setReportReason] = useState("");
   const [openAlert, setOpenAlert] = useState(false);
-
 
 
  const handleLike = (userId) => {
@@ -71,7 +70,7 @@ export default function Home() {
               />
               <h2 className="text-xl font-semibold text-center">{user.name}</h2>
               {user.estadoCivil && (
-                <p className="text-center text-gray-500">{user.estadocivil}</p>
+                <p className="text-center text-gray-500">{user.estadoCivil}</p>
               )}
               <p className="text-center text-gray-600 mt-2">{user.email}</p>
              {/* Botón Dar Like */}
@@ -83,6 +82,11 @@ export default function Home() {
              <button onClick={() => handleReport(user.id)} className="absolute top-2 left-2 text-sm text-gray-400 hover:text-yellow-500 transition" title="Reportar usuario">
              <FaFlag size={18} />
              </button>
+               {/* Botón Bloquear */}
+              <button onClick={() => bloquearUsuario(user.id)} className="absolute bottom-2 left-2 text-sm text-gray-400 hover:text-red-600 transition"
+              title="Bloquear usuario">
+              <FaBan size={18} />
+              </button>
             </div>
           ))}
         </div>
@@ -123,23 +127,21 @@ export default function Home() {
         </button>
         <button
           className="px-4 py-2 bg-blue-500 text-white rounded-lg disabled:bg-gray-400"
-          disabled={users.length < 6} // Si no hay más usuarios, deshabilita
+          disabled={users.length < 6} 
           onClick={() => setPage(page + 1)}
         >
           Siguiente
         </button>
       </div>
-      <Snackbar
-  open={openAlert}
-  autoHideDuration={3000}
-  onClose={() => setOpenAlert(false)}
-  anchorOrigin={{ vertical: "top", horizontal: "center" }}
->
-  <Alert severity="info" onClose={() => setOpenAlert(false)}>
-    {info}
-  </Alert>
-</Snackbar>
-
+      <Snackbar open={openAlert}
+       autoHideDuration={3000}
+       onClose={() => setOpenAlert(false)}
+       anchorOrigin={{ vertical: "top", horizontal: "center" }}
+       >
+     <Alert severity="info" onClose={() => setOpenAlert(false)}>
+       {info}
+     </Alert>
+    </Snackbar>
     </div>
   );
 }

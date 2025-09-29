@@ -33,6 +33,20 @@ export default function Header() {
         >
           Perfil 
         </Link>
+         {localStorage.getItem("role") === "ADMIN" && (
+        <Link
+        to="/reportes"
+        className="px-3 py-2 rounded-md text-gray-700 hover:bg-blue-200 hover:text-blue-800 transition">
+        Reportes
+        </Link>
+        )}
+          {localStorage.getItem("role") === "ADMIN" && (
+        <Link
+        to="/administrador"
+        className="px-3 py-2 rounded-md text-gray-700 hover:bg-blue-200 hover:text-blue-800 transition">
+        Gestor
+        </Link>
+        )}
         <button
           onClick={logout}
           className="px-3 py-2 rounded-md bg-red-500 text-white hover:bg-red-600 transition"

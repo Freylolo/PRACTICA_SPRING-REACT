@@ -88,4 +88,11 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/admin/bloqueados")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Listar usuarios bloqueados", description = "Devuelve solo usuarios bloqueados")
+    public ResponseEntity<List<UserResponseDTO>> listarUsuariosBloqueados() {
+        List<UserResponseDTO> blockedDTOs = userService.listarUsuariosBloqueados();
+        return ResponseEntity.ok(blockedDTOs);
+    }
 }

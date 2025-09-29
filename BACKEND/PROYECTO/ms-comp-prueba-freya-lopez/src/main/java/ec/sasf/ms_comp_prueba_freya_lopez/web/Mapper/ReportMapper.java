@@ -14,6 +14,8 @@ public interface ReportMapper {
 
     @Mapping(source = "emisor.id", target = "emisorId")
     @Mapping(source = "denunciado.id", target = "denunciadoId")
+    @Mapping(source = "emisor.name", target = "emisorName")
+    @Mapping(source = "denunciado.name", target = "denunciadoName")
     @Mapping(source = "feCreacion", target = "createdAt")
     @Mapping(source = "status", target = "status")
     @Mapping(source = "motivo", target = "motivo")

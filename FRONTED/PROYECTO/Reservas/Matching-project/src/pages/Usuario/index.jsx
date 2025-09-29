@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import useUsers from "../../hooks/useUsers.js";
 import Header from "../../components/Header.jsx";
-import { TextField, Button, Stack, Alert } from "@mui/material";
+import { TextField, Button, Stack, Alert, MenuItem } from "@mui/material";
 
 export default function EditProfile() {
   const token = localStorage.getItem("token");
@@ -70,12 +70,12 @@ export default function EditProfile() {
             fullWidth
           />
           <TextField
-            label="Estado Civil"
-            name="estadoCivil"
-            value={formData.estadoCivil}
-            onChange={handleChange}
-            fullWidth
-          />
+          select label="Estado Civil" name="estadoCivil"  value={formData.estadoCivil} onChange={handleChange} fullWidth>
+           <MenuItem value="Soltero/a">Soltero/a</MenuItem>
+           <MenuItem value="Casado/a">Casado/a</MenuItem>
+           <MenuItem value="Divorciado/a">Divorciado/a</MenuItem>
+           <MenuItem value="En relación abierta">En relación abierta</MenuItem>
+         </TextField>
           <Button type="submit" variant="contained" color="primary" fullWidth>
             Guardar Cambios
           </Button>

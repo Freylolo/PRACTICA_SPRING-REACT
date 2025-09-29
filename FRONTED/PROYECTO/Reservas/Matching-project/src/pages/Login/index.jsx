@@ -35,24 +35,25 @@ export default function Login() {
     });
 
     if (!response.ok) {
-      let errorMessage = "Error en el login";
+    let errorMessage = "Error en el login";
 
-      // Manejar errores específicos de status
-      if (response.status === 401 || response.status === 403) {
-        errorMessage = "Usuario o contraseña incorrectos";
-      } else if (response.status >= 500) {
-        errorMessage = "Error del servidor, inténtalo más tarde";
-      } else {
-        try {
-          const errData = await response.json();
-          errorMessage = errData.mensaje || errData.error || errorMessage;
-        } catch {
-          errorMessage = await response.text();
-        }
-      }
-      throw new Error(errorMessage);
+    try {
+        const errData = await response.json();
+        // Si el backend envía mensaje personalizado
+        errorMessage = errData.mensaje || errData.error || errorMessage;
+    } catch {
+        errorMessage = await response.text();
     }
 
+    // Sobrescribir mensaje para usuario bloqueado
+    if (errorMessage.includes("Usuario bloqueado")) {
+        errorMessage = "Usuario bloqueado: demasiados intentos fallidos";
+    } else if (response.status === 401 || response.status === 403) {
+        errorMessage = "Usuario o contraseña incorrectos";
+    }
+
+    throw new Error(errorMessage);
+}
     const data = await response.json();
     const token = data.token;
     const payload = JSON.parse(atob(token.split(".")[1]));

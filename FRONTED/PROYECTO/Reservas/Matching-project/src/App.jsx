@@ -5,6 +5,8 @@ import Home from './pages/Home/index.jsx';
 import Notificaciones from'./pages/Notificaciones/index.jsx'
 import Register from './pages/register/index.jsx';
 import Perfil from './pages/Usuario/index.jsx';
+import Reportes from './pages/Reportes/index.jsx';
+import Administrador from './pages/Administrador/index.jsx';
 
 function App() {
 
@@ -17,6 +19,8 @@ function App() {
       <Route path="/home" element={<Home />} />
       <Route path="/perfil" element={<Perfil />} />
       <Route path="/registro" element={<Register />} />
+      <Route path="/reportes" element={<Reportes />} />
+      <Route path="/administrador" element={<Administrador />} />
     </Routes>
   );
 }
